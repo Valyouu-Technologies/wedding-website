@@ -33,15 +33,8 @@ export const blessing =
 // Cards shown in each event's swipeable row.
 //   { video, poster }  an invitation video (plays muted; guests can unmute)
 //   { image }          a still image, cropped to fill the card
-//   { image, fit: 'contain', bg }  a still image shown whole on a `bg` colour
 //   download           file saved by the download button (defaults to the media)
 //   {}                 an empty black card, until the artwork is ready
-const formalDressCode = {
-  image: '/media/formal-dress-code.jpg',
-  fit: 'contain',
-  bg: '#fdfaf3',
-  label: 'Formal dress code',
-}
 
 export const events = [
   {
@@ -50,13 +43,10 @@ export const events = [
     month: 'Oct',
     year: '2026',
     time: '10:00 AM',
-    cards: [
-      { video: '/media/haldi.mp4', poster: '/media/haldi-poster.jpg' },
-      { image: '/media/haldi-dress-code.jpg', label: 'Haldi & Mehandi youngsters dress code' },
-    ],
+    cards: [{ video: '/media/haldi.mp4', poster: '/media/haldi-poster.jpg' }],
     venues: [
       { name: "Bride's Home", map: null },
-      { name: "Groom's Home", map: null },
+      { name: "Groom's Home", map: 'https://maps.app.goo.gl/TefFaHhzWL4FynTCA' },
     ],
   },
   {
@@ -65,10 +55,7 @@ export const events = [
     month: 'Oct',
     year: '2026',
     time: '06:00 PM',
-    cards: [
-      { video: '/media/sangeeth.mp4', poster: '/media/sangeeth-poster.jpg' },
-      formalDressCode,
-    ],
+    cards: [{ video: '/media/sangeeth.mp4', poster: '/media/sangeeth-poster.jpg' }],
     venues: [{ name: 'Tavaro Resort', map: maps('Tavaro Resort Kokapet Hyderabad') }],
   },
   {
@@ -88,10 +75,7 @@ export const events = [
     month: 'Nov',
     year: '2026',
     time: '07:00 PM',
-    cards: [
-      { video: '/media/reception.mp4', poster: '/media/reception-poster.jpg' },
-      formalDressCode,
-    ],
+    cards: [{ video: '/media/reception.mp4', poster: '/media/reception-poster.jpg' }],
     venues: [{ name: 'Savaaya Convention', map: maps('Savaaya Convention Gandipet Hyderabad') }],
   },
 ]

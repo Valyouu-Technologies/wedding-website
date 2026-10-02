@@ -80,15 +80,13 @@ function InviteVideo({ src, poster, label }) {
 
 // One card in an event's swipeable row: a video, an image, or (with neither)
 // an empty black placeholder until the artwork arrives.
-export default function Card({ video, poster, image, fit, bg, download, label }) {
+export default function Card({ video, poster, image, download, label }) {
   const file = download ?? video ?? image
 
   return (
-    <div className={`card ${video || image ? '' : 'empty'}`} style={bg && { background: bg }}>
+    <div className={`card ${video || image ? '' : 'empty'}`}>
       {video && <InviteVideo src={video} poster={poster} label={label} />}
-      {image && (
-        <img src={image} alt={label} loading="lazy" style={fit && { objectFit: fit }} />
-      )}
+      {image && <img src={image} alt={label} loading="lazy" />}
       {file && (
         <a className="card-btn download" href={file} download aria-label="Download">
           <svg viewBox="0 0 24 24" aria-hidden="true">
