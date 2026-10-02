@@ -52,7 +52,7 @@ export const events = [
     time: '10:00 AM',
     cards: [
       { video: '/media/haldi.mp4', poster: '/media/haldi-poster.jpg' },
-      {}, // Youngsters dress code
+      { image: '/media/haldi-dress-code.jpg', label: 'Haldi & Mehandi youngsters dress code' },
     ],
     venues: [
       { name: "Bride's Home", map: null },
