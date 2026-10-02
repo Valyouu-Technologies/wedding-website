@@ -87,7 +87,7 @@ export const events = [
     day: '03',
     month: 'Nov',
     year: '2026',
-    time: '07:30 PM',
+    time: '07:00 PM',
     cards: [
       { video: '/media/reception.mp4', poster: '/media/reception-poster.jpg' },
       formalDressCode,
