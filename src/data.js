@@ -32,9 +32,17 @@ export const blessing =
 
 // Cards shown in each event's swipeable row.
 //   { video, poster }  an invitation video (plays muted; guests can unmute)
-//   { image }          a still image
+//   { image }          a still image, cropped to fill the card
+//   { image, fit: 'contain', bg }  a still image shown whole on a `bg` colour
 //   download           file saved by the download button (defaults to the media)
 //   {}                 an empty black card, until the artwork is ready
+const formalDressCode = {
+  image: '/media/formal-dress-code.jpg',
+  fit: 'contain',
+  bg: '#fdfaf3',
+  label: 'Formal dress code',
+}
+
 export const events = [
   {
     title: ['Haldi', 'Mehandi'],
@@ -59,7 +67,7 @@ export const events = [
     time: '06:00 PM',
     cards: [
       { video: '/media/sangeeth.mp4', poster: '/media/sangeeth-poster.jpg' },
-      {}, // Formal dress code
+      formalDressCode,
     ],
     venues: [{ name: 'Tavaro Resort', map: maps('Tavaro Resort Kokapet Hyderabad') }],
   },
@@ -69,9 +77,7 @@ export const events = [
     month: 'Nov',
     year: '2026',
     time: '10:08 AM',
-    cards: [
-      {}, // Wedding invitation video
-    ],
+    cards: [{ video: '/media/wedding.mp4', poster: '/media/wedding-poster.jpg' }],
     venues: [
       { name: 'Ananda Convention', map: maps('Ananda Convention Himayath Sagar Hyderabad') },
     ],
@@ -83,8 +89,8 @@ export const events = [
     year: '2026',
     time: '07:30 PM',
     cards: [
-      { image: '/media/reception.jpg', download: '/media/reception.pdf' },
-      {}, // Formal dress code
+      { video: '/media/reception.mp4', poster: '/media/reception-poster.jpg' },
+      formalDressCode,
     ],
     venues: [{ name: 'Savaaya Convention', map: maps('Savaaya Convention Gandipet Hyderabad') }],
   },

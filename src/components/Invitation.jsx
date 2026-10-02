@@ -156,7 +156,7 @@ export default function Invitation() {
 
             <div className={`cards ${ev.cards.length === 1 ? 'single' : ''}`}>
               {ev.cards.map((card, i) => (
-                <Card key={i} {...card} label={`${ev.title.join(' & ')} invitation`} />
+                <Card key={i} label={`${ev.title.join(' & ')} invitation`} {...card} />
               ))}
             </div>
 
