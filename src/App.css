@@ -1,0 +1,342 @@
+:root {
+  /* The intro video's final-frame cream as browsers decode it. */
+  --cream: #f8d6a7;
+  --ink: #231b13;
+  --brown: #5b4a32;
+  --gold: #a8742f;
+  /* 1% of the column width; everything scales with the phone's width. */
+  --u: calc(min(100vw, 430px) / 100);
+
+  --script: 'Pinyon Script', cursive;
+  --sans: 'Jost', system-ui, sans-serif;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* One fixed phone-sized screen; on desktop it sits centred like a phone.
+   The page itself never scrolls; only the invitation text does (see .invitation). */
+.page {
+  position: relative;
+  max-width: 430px;
+  height: 100svh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+  text-align: center;
+}
+
+/* The video, and later its frozen last frame, is the permanent background. */
+.bg-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.bg-media[hidden] {
+  display: none;
+}
+
+.script {
+  font-family: var(--script);
+  font-size: calc(var(--u) * 12.5);
+  line-height: 1.15;
+  color: var(--brown);
+}
+
+.weds {
+  font-family: var(--script);
+  font-size: calc(var(--u) * 6.4);
+  line-height: 1.2;
+  color: var(--brown);
+}
+
+.caps {
+  font-family: var(--sans);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Names over the temple shot ---------- */
+
+.names-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 calc(var(--u) * 6) 12svh;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+  pointer-events: none;
+}
+
+.names-overlay.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.names-overlay .script {
+  color: #33261b;
+  font-size: calc(var(--u) * 11);
+}
+
+.names-overlay .weds {
+  color: #33261b;
+  font-size: calc(var(--u) * 5);
+}
+
+/* ---------- Invitation ---------- */
+
+.invitation {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 calc(var(--u) * 10) calc(14svh + env(safe-area-inset-bottom));
+  /* Clip the text to the arch opening (traced from the video's last frame and
+     sized/positioned exactly like the video's object-fit: cover), so it fades
+     out at the carved edges instead of running over them. */
+  /* Second layer: a top fade whose height (--fade, set from scroll position in
+     Invitation.jsx) grows from 0 as you scroll, so the first screen is untouched
+     but scrolled text dissolves before reaching the carved top. */
+  --fade: 0px;
+  -webkit-mask:
+    url('/arch-mask.svg') center / cover no-repeat,
+    linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
+  -webkit-mask-composite: source-in;
+  mask:
+    url('/arch-mask.svg') center / cover no-repeat,
+    linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
+  mask-composite: intersect;
+}
+
+.invitation::-webkit-scrollbar {
+  display: none;
+}
+
+.hero {
+  padding-top: 10svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.emblem {
+  display: block;
+  width: calc(var(--u) * 34);
+  height: auto;
+}
+
+.together {
+  margin-top: 5svh;
+  font-size: calc(var(--u) * 4);
+  line-height: 1.35;
+}
+
+.person.first {
+  margin-top: 9svh;
+}
+
+.person {
+  margin-top: 2.5svh;
+}
+
+.parents {
+  font-size: calc(var(--u) * 3.3);
+  margin-bottom: 0.4svh;
+}
+
+.weds {
+  margin-top: 0.5svh;
+}
+
+.blessing {
+  margin-top: 6svh;
+  font-weight: 300;
+  font-size: calc(var(--u) * 4.1);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+.hero .datetime {
+  margin-top: 6svh;
+}
+
+.datetime {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 2.4);
+  color: #3d3022;
+}
+
+.day {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: calc(var(--u) * 11);
+  line-height: 1;
+  color: var(--brown);
+}
+
+.month-year,
+.time {
+  font-size: calc(var(--u) * 3.7);
+  line-height: 1.25;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.month-year {
+  margin-left: calc(var(--u) * -1.2);
+}
+
+.rule {
+  align-self: stretch;
+  width: 1.5px;
+  margin: 0 calc(var(--u) * 2);
+  background: var(--gold);
+}
+
+.venues {
+  display: flex;
+  justify-content: center;
+  gap: calc(var(--u) * 6);
+  margin-top: calc(var(--u) * 4);
+}
+
+.venue {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: calc(var(--u) * 5.6);
+  line-height: 1.15;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1.5px dotted var(--ink);
+}
+
+/* ---------- Events ---------- */
+
+.event {
+  margin-top: calc(var(--u) * 20);
+}
+
+.event:first-of-type {
+  margin-top: calc(var(--u) * 26);
+}
+
+.event-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 3);
+  margin-bottom: calc(var(--u) * 5);
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: calc(var(--u) * 7.2);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.star {
+  font-size: 0.45em;
+  color: var(--brown);
+}
+
+.amp {
+  margin: 0 0.25em;
+  font-style: italic;
+}
+
+.gratitude {
+  margin-top: calc(var(--u) * 28);
+}
+
+.gratitude h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: calc(var(--u) * 7.2);
+  margin-bottom: calc(var(--u) * 3);
+}
+
+.gratitude p {
+  font-weight: 300;
+  font-size: calc(var(--u) * 4.3);
+  line-height: 1.3;
+}
+
+.monogram {
+  position: relative;
+  width: calc(var(--u) * 14);
+  height: calc(var(--u) * 14);
+  margin: calc(var(--u) * 5) auto 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: calc(var(--u) * 9);
+  line-height: 1;
+  color: var(--brown);
+}
+
+.monogram span {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-70%);
+}
+
+.monogram span + span {
+  top: 18%;
+  transform: translateX(-30%);
+}
+
+/* ---------- Motion ---------- */
+
+.enter {
+  opacity: 0;
+  animation: rise 1s ease forwards;
+  animation-delay: calc(var(--i, 0) * 140ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.on-scroll.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter,
+  .on-scroll,
+  .names-overlay {
+    animation: none;
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .names-overlay:not(.is-visible) {
+    opacity: 0;
+  }
+}
