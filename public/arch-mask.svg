@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280">
+  <!-- Opening of the arch in the intro video's final frame (same 720x1280 frame).
+       Used as a CSS mask so scrolling content only shows inside the arch. -->
+  <defs>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1280" gradientUnits="userSpaceOnUse">
+      <stop offset="0.9" stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+  <polygon points="360,38 447,57 524,92 567,140 594,198 607,264 613,331 621,400 625,1000 720,1100 720,1280 0,1280 0,1100 95,1000 99,400 107,331 113,264 126,198 153,140 196,92 273,57 360,38" fill="url(#fade)" filter="url(#soft)"/>
+</svg>

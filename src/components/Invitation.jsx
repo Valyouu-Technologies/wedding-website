@@ -49,24 +49,29 @@ function Person({ parents, name, ...rest }) {
   )
 }
 
-// True while the page is scrolled to (nearly) the very top.
-function useAtTop(threshold = 24) {
+// Tracks the scroller: whether it's at (nearly) the very top, and grows the
+// top fade (CSS --fade) with scroll distance, up to the height of the arch's
+// carved top, so scrolled text dissolves before reaching the carving.
+function useScroll(ref, threshold = 24) {
   const [atTop, setAtTop] = useState(true)
   useEffect(() => {
-    const onScroll = () => setAtTop(window.scrollY <= threshold)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [threshold])
+    const el = ref.current
+    const onScroll = () => {
+      setAtTop(el.scrollTop <= threshold)
+      const max = el.clientHeight * 0.24
+      el.style.setProperty('--fade', `${Math.min(el.scrollTop, max)}px`)
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
+  }, [ref, threshold])
   return atTop
 }
 
-// The first screen, laid over the intro video's final frame.
-export function Hero() {
+// The first screen.
+function Hero({ atTop }) {
   // Staggered entrance.
   const step = (i, className = '') => ({ style: { '--i': i }, className: `enter ${className}` })
   const next = () => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })
-  const atTop = useAtTop()
 
   return (
     <section className="hero">
@@ -102,8 +107,7 @@ export function Hero() {
 }
 
 // Fade sections in as they scroll into view.
-function useReveal() {
-  const ref = useRef(null)
+function useReveal(ref) {
   useEffect(() => {
     const targets = [...ref.current.querySelectorAll('.on-scroll')]
     const io = new IntersectionObserver(
@@ -120,55 +124,61 @@ function useReveal() {
     )
     targets.forEach((t) => io.observe(t))
     return () => io.disconnect()
-  }, [])
-  return ref
+  }, [ref])
 }
 
-export function Events() {
-  const ref = useReveal()
+// Everything after the intro. The arch (the video's last frame) stays fixed
+// behind; only this scrolls, clipped to the arch opening.
+export default function Invitation() {
+  const ref = useRef(null)
+  useReveal(ref)
+  const atTop = useScroll(ref)
 
   return (
-    <main className="events" id="events" ref={ref}>
-      {events.map((ev) => (
-        <section key={ev.title.join()} className="event on-scroll">
-          <h2 className="event-title">
-            <span className="star">✦</span>
-            <span>
-              {ev.title.map((part, i) => (
-                <span key={part}>
-                  {i > 0 && <em className="amp">&amp;</em>}
-                  {part}
-                </span>
+    <main className="invitation" ref={ref}>
+      <Hero atTop={atTop} />
+      <div className="events" id="events">
+        {events.map((ev) => (
+          <section key={ev.title.join()} className="event on-scroll">
+            <h2 className="event-title">
+              <span className="star">✦</span>
+              <span>
+                {ev.title.map((part, i) => (
+                  <span key={part}>
+                    {i > 0 && <em className="amp">&amp;</em>}
+                    {part}
+                  </span>
+                ))}
+              </span>
+              <span className="star">✦</span>
+            </h2>
+            <DateTime {...ev} />
+
+            <div className={`cards ${ev.cards.length === 1 ? 'single' : ''}`}>
+              {ev.cards.map((card, i) => (
+                <Card key={i} {...card} label={`${ev.title.join(' & ')} invitation`} />
               ))}
-            </span>
-            <span className="star">✦</span>
-          </h2>
-          <DateTime {...ev} />
+            </div>
 
-          <div className={`cards ${ev.cards.length === 1 ? 'single' : ''}`}>
-            {ev.cards.map((card, i) => (
-              <Card key={i} {...card} label={`${ev.title.join(' & ')} invitation`} />
-            ))}
+            <p className="caps venue-label">Venue</p>
+            <Venues venues={ev.venues} />
+          </section>
+        ))}
+
+        <footer className="gratitude on-scroll">
+          <div className="monogram" aria-label="S & S">
+            <span>S</span>
+            <span>S</span>
           </div>
-
-          <p className="caps venue-label">Venue</p>
-          <Venues venues={ev.venues} />
-        </section>
-      ))}
-
-      <footer className="gratitude on-scroll">
-        <div className="monogram" aria-label="S & S">
-          <span>S</span>
-          <span>S</span>
-        </div>
-        <div className="divider" aria-hidden="true">
-          <span>✦</span>
-          <i />
-          <span>✦</span>
-        </div>
-        <h2>{gratitude.title}</h2>
-        <p>{gratitude.text}</p>
-      </footer>
+          <div className="divider" aria-hidden="true">
+            <span>✦</span>
+            <i />
+            <span>✦</span>
+          </div>
+          <h2>{gratitude.title}</h2>
+          <p>{gratitude.text}</p>
+        </footer>
+      </div>
     </main>
   )
 }

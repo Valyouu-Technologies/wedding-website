@@ -13,47 +13,33 @@
   --serif: 'Cormorant Garamond', Georgia, serif;
 }
 
-/* A phone-width column; on desktop it sits centred like a phone. */
+/* One fixed phone-sized screen; on desktop it sits centred like a phone.
+   The page itself never scrolls; only the invitation does (see .invitation),
+   so the arch behind it stays put. */
 .page {
   position: relative;
   max-width: 430px;
-  min-height: 100svh;
+  height: 100svh;
   margin: 0 auto;
-  overflow-x: clip;
+  overflow: hidden;
   background: var(--cream);
   color: var(--ink);
   font-family: var(--sans);
   text-align: center;
 }
 
-/* First screen: the intro video, then its frozen last frame behind the hero.
-   It scrolls away with the page like any other section. */
-.stage {
-  position: relative;
-  min-height: 100svh;
-}
-
+/* The video, and later its frozen last frame, is the permanent background. */
 .bg-media {
   position: absolute;
-  inset: 0 0 auto;
+  inset: 0;
   width: 100%;
-  height: 100svh;
+  height: 100%;
   object-fit: cover;
   pointer-events: none;
 }
 
 .bg-media[hidden] {
   display: none;
-}
-
-/* Blend the frame's bottom edge into the page cream. */
-.stage::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0;
-  height: 12svh;
-  background: linear-gradient(to bottom, transparent, var(--cream));
-  pointer-events: none;
 }
 
 .script {
@@ -81,9 +67,7 @@
 
 .names-overlay {
   position: absolute;
-  inset: 0 0 auto;
-  height: 100svh;
-  z-index: 1;
+  inset: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -109,12 +93,41 @@
   font-size: calc(var(--u) * 5);
 }
 
+/* ---------- Invitation ---------- */
+
+.invitation {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* Clip the content to the arch opening (traced from the video's last frame
+     and sized/positioned exactly like the video's object-fit: cover), so it
+     fades out at the carved edges instead of running over them. */
+  /* Second layer: a top fade whose height (--fade, set from scroll position in
+     Invitation.jsx) grows from 0 as you scroll, so the first screen is untouched
+     but scrolled content dissolves before reaching the carved top. */
+  --fade: 0px;
+  -webkit-mask:
+    url('/arch-mask.svg') center / cover no-repeat,
+    linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
+  -webkit-mask-composite: source-in;
+  mask:
+    url('/arch-mask.svg') center / cover no-repeat,
+    linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
+  mask-composite: intersect;
+}
+
+.invitation::-webkit-scrollbar {
+  display: none;
+}
+
 /* ---------- Hero ---------- */
 
 .hero {
-  position: relative;
-  z-index: 1;
-  min-height: 100svh;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
