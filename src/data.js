@@ -9,32 +9,39 @@ export const intro = {
   poster: '/intro-start.jpg', // shown while the video loads
   endFrame: '/intro-end.jpg', // shown instead of the video if autoplay is blocked
   // Timings in seconds, matched to the intro video.
-  namesFrom: 3.8, // doors open, temple in view
+  namesFrom: 3.0, // doors open, temple in view
   namesUntil: 7.0, // camera starts pushing into the arch
   contentAt: 8.3, // cream arch has settled
 }
 
-export const groom = { name: 'Sudeepth Reddy', parents: 'Son of Megan & Swetha' }
-export const bride = { name: 'Sukritha Balaji', parents: 'Daughter of Megan & Swetha' }
+export const groom = {
+  name: 'Sudeepth Reddy',
+  parents: ['Son of Smt. Adulla Saritha', 'Sri. Adulla Srinivas Reddy'],
+}
+export const bride = {
+  name: 'Sukritha Balaji',
+  parents: ['Daughter of Smt. Kavitha Balaji', 'Sri. V.S. Balaji'],
+}
 
 export const blessing =
   'With the blessings of our families, we invite you to celebrate the beginning of forever'
 
-export const wedding = {
-  day: '01',
-  month: 'Nov',
-  year: '2026',
-  time: '10:08 AM',
-  venues: [{ name: 'Ananda Convention', map: maps('Ananda Convention') }],
-}
-
+// Cards shown in each event's swipeable row.
+//   { video, poster }  an invitation video (plays muted; guests can unmute)
+//   { image }          a still image
+//   download           file saved by the download button (defaults to the media)
+//   {}                 an empty black card, until the artwork is ready
 export const events = [
   {
     title: ['Haldi', 'Mehandi'],
     day: '30',
     month: 'Oct',
     year: '2026',
-    time: '11:00 AM',
+    time: '10:00 AM',
+    cards: [
+      { video: '/media/haldi.mp4', poster: '/media/haldi-poster.jpg' },
+      {}, // Youngsters dress code
+    ],
     venues: [
       { name: "Bride's Home", map: null },
       { name: "Groom's Home", map: null },
@@ -45,20 +52,41 @@ export const events = [
     day: '30',
     month: 'Oct',
     year: '2026',
-    time: '08:00 PM',
-    venues: [{ name: 'Tavaro Resort', map: maps('Tavaro Resort') }],
+    time: '06:00 PM',
+    cards: [
+      { video: '/media/sangeeth.mp4', poster: '/media/sangeeth-poster.jpg' },
+      {}, // Formal dress code
+    ],
+    venues: [{ name: 'Tavaro Resort', map: maps('Tavaro Resort Kokapet Hyderabad') }],
+  },
+  {
+    title: ['Wedding'],
+    day: '01',
+    month: 'Nov',
+    year: '2026',
+    time: '10:08 AM',
+    cards: [
+      {}, // Wedding invitation video
+    ],
+    venues: [
+      { name: 'Ananda Convention', map: maps('Ananda Convention Himayath Sagar Hyderabad') },
+    ],
   },
   {
     title: ['Reception'],
     day: '03',
     month: 'Nov',
     year: '2026',
-    time: '07:00 PM',
-    venues: [{ name: 'Savaaya Convention', map: maps('Savaaya Convention') }],
+    time: '07:30 PM',
+    cards: [
+      { image: '/media/reception.jpg', download: '/media/reception.pdf' },
+      {}, // Formal dress code
+    ],
+    venues: [{ name: 'Savaaya Convention', map: maps('Savaaya Convention Gandipet Hyderabad') }],
   },
 ]
 
 export const gratitude = {
   title: 'With Gratitude',
-  text: 'Thank you for celebrating our love, sharing our joy, and being part of the beginning of our forever.',
+  text: "Our story brought us here, but it's your presence that will make every celebration complete. See you soon.",
 }

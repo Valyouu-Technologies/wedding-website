@@ -47,15 +47,16 @@ export default function IntroVideo({
     }
 
     const onEnded = () => report('content')
-    const timeout = setTimeout(() => {
-      if (el.paused) skip()
-    }, START_TIMEOUT_MS)
+    // `paused` turns false as soon as play() is called, even while the video
+    // is still buffering, so time out unless playback has actually begun.
+    const timeout = setTimeout(skip, START_TIMEOUT_MS)
+    const onPlaying = () => clearTimeout(timeout)
 
     el.addEventListener('error', skip)
     el.addEventListener('ended', onEnded)
+    el.addEventListener('playing', onPlaying)
     el.play()
       .then(() => {
-        clearTimeout(timeout)
         if (!cancelled) raf = requestAnimationFrame(tick)
       })
       .catch(skip)
@@ -66,6 +67,7 @@ export default function IntroVideo({
       cancelAnimationFrame(raf)
       el.removeEventListener('error', skip)
       el.removeEventListener('ended', onEnded)
+      el.removeEventListener('playing', onPlaying)
     }
   }, [namesFrom, namesUntil, contentAt, onPhase])
 

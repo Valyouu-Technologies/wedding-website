@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Emblem from './Emblem.jsx'
-import { groom, bride, blessing, wedding, events, gratitude } from '../data.js'
+import Card from './Card.jsx'
+import { groom, bride, blessing, events, gratitude } from '../data.js'
 
 function DateTime({ day, month, year, time }) {
   return (
@@ -12,11 +13,7 @@ function DateTime({ day, month, year, time }) {
         {year}
       </span>
       <span className="rule" />
-      <span className="time">
-        {time}
-        <br />
-        Venue is
-      </span>
+      <span className="time">{time}</span>
     </div>
   )
 }
@@ -39,6 +36,51 @@ function Venues({ venues }) {
   )
 }
 
+function Person({ parents, name, ...rest }) {
+  return (
+    <div {...rest}>
+      <p className="caps parents">
+        {parents[0]}
+        <br />
+        {parents[1]}
+      </p>
+      <h1 className="script">{name}</h1>
+    </div>
+  )
+}
+
+// The first screen, laid over the intro video's final frame.
+export function Hero() {
+  // Staggered entrance.
+  const step = (i, className = '') => ({ style: { '--i': i }, className: `enter ${className}` })
+  const next = () => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })
+
+  return (
+    <section className="hero">
+      <div {...step(0)}>
+        <Emblem />
+      </div>
+      <p {...step(1, 'caps together')}>
+        Together with
+        <br />
+        their families
+      </p>
+      <p {...step(2, 'blessing')}>{blessing}</p>
+
+      <Person {...step(3, 'person first')} {...groom} />
+      <p {...step(4, 'weds')}>Weds</p>
+      <Person {...step(5, 'person')} {...bride} />
+
+      <button type="button" {...step(6, 'scroll-cue')} onClick={next}>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+        Step into our celebration
+      </button>
+    </section>
+  )
+}
+
 // Fade sections in as they scroll into view.
 function useReveal() {
   const ref = useRef(null)
@@ -54,7 +96,7 @@ function useReveal() {
             io.unobserve(t)
           })
         }),
-      { threshold: 0.2 },
+      { threshold: 0.15 },
     )
     targets.forEach((t) => io.observe(t))
     return () => io.disconnect()
@@ -62,84 +104,50 @@ function useReveal() {
   return ref
 }
 
-// Grow the top fade (CSS --fade) with scroll distance, up to the height of the
-// arch's carved top.
-function useTopFade(ref) {
-  useEffect(() => {
-    const el = ref.current
-    const onScroll = () => {
-      const max = el.clientHeight * 0.24
-      el.style.setProperty('--fade', `${Math.min(el.scrollTop, max)}px`)
-    }
-    el.addEventListener('scroll', onScroll, { passive: true })
-    return () => el.removeEventListener('scroll', onScroll)
-  }, [ref])
-}
-
-export default function Invitation() {
+export function Events() {
   const ref = useReveal()
-  useTopFade(ref)
-  // Staggered entrance for the first screen.
-  const step = (i) => ({ style: { '--i': i }, className: 'enter' })
 
   return (
-    <main className="invitation" ref={ref}>
-      <section className="hero">
-        <div {...step(0)}>
-          <Emblem />
-        </div>
-        <p {...step(1)} className="enter caps together">
-          Together with
-          <br />
-          their families
-        </p>
-
-        <div {...step(2)} className="enter person first">
-          <p className="caps parents">{groom.parents}</p>
-          <h1 className="script">{groom.name}</h1>
-        </div>
-        <p {...step(3)} className="enter weds">
-          Weds
-        </p>
-        <div {...step(4)} className="enter person">
-          <p className="caps parents">{bride.parents}</p>
-          <h1 className="script">{bride.name}</h1>
-        </div>
-
-        <p {...step(5)} className="enter blessing">
-          {blessing}
-        </p>
-
-        <div {...step(6)} className="enter">
-          <DateTime {...wedding} />
-          <Venues venues={wedding.venues} />
-        </div>
-      </section>
-
+    <main className="events" id="events" ref={ref}>
       {events.map((ev) => (
         <section key={ev.title.join()} className="event on-scroll">
           <h2 className="event-title">
             <span className="star">✦</span>
-            {ev.title.map((part, i) => (
-              <span key={part}>
-                {i > 0 && <em className="amp">&amp;</em>}
-                {part}
-              </span>
-            ))}
+            <span>
+              {ev.title.map((part, i) => (
+                <span key={part}>
+                  {i > 0 && <em className="amp">&amp;</em>}
+                  {part}
+                </span>
+              ))}
+            </span>
             <span className="star">✦</span>
           </h2>
           <DateTime {...ev} />
+
+          <div className={`cards ${ev.cards.length === 1 ? 'single' : ''}`}>
+            {ev.cards.map((card, i) => (
+              <Card key={i} {...card} label={`${ev.title.join(' & ')} invitation`} />
+            ))}
+          </div>
+
+          <p className="caps venue-label">Venue</p>
           <Venues venues={ev.venues} />
         </section>
       ))}
 
       <footer className="gratitude on-scroll">
-        <h2>{gratitude.title}</h2>
-        <p>{gratitude.text}</p>
         <div className="monogram" aria-label="S & S">
           <span>S</span>
           <span>S</span>
         </div>
+        <div className="divider" aria-hidden="true">
+          <span>✦</span>
+          <i />
+          <span>✦</span>
+        </div>
+        <h2>{gratitude.title}</h2>
+        <p>{gratitude.text}</p>
       </footer>
     </main>
   )

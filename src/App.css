@@ -1,6 +1,6 @@
 :root {
   /* The intro video's final-frame cream as browsers decode it. */
-  --cream: #f8d6a7;
+  --cream: #faddb7;
   --ink: #231b13;
   --brown: #5b4a32;
   --gold: #a8742f;
@@ -8,36 +8,52 @@
   --u: calc(min(100vw, 430px) / 100);
 
   --script: 'Pinyon Script', cursive;
+  --display: 'Italiana', 'Cormorant Garamond', Georgia, serif;
   --sans: 'Jost', system-ui, sans-serif;
   --serif: 'Cormorant Garamond', Georgia, serif;
 }
 
-/* One fixed phone-sized screen; on desktop it sits centred like a phone.
-   The page itself never scrolls; only the invitation text does (see .invitation). */
+/* A phone-width column; on desktop it sits centred like a phone. */
 .page {
   position: relative;
   max-width: 430px;
-  height: 100svh;
+  min-height: 100svh;
   margin: 0 auto;
-  overflow: hidden;
+  overflow-x: clip;
   background: var(--cream);
   color: var(--ink);
   font-family: var(--sans);
   text-align: center;
 }
 
-/* The video, and later its frozen last frame, is the permanent background. */
+/* First screen: the intro video, then its frozen last frame behind the hero.
+   It scrolls away with the page like any other section. */
+.stage {
+  position: relative;
+  min-height: 100svh;
+}
+
 .bg-media {
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto;
   width: 100%;
-  height: 100%;
+  height: 100svh;
   object-fit: cover;
   pointer-events: none;
 }
 
 .bg-media[hidden] {
   display: none;
+}
+
+/* Blend the frame's bottom edge into the page cream. */
+.stage::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 12svh;
+  background: linear-gradient(to bottom, transparent, var(--cream));
+  pointer-events: none;
 }
 
 .script {
@@ -65,7 +81,9 @@
 
 .names-overlay {
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto;
+  height: 100svh;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -91,47 +109,21 @@
   font-size: calc(var(--u) * 5);
 }
 
-/* ---------- Invitation ---------- */
-
-.invitation {
-  position: absolute;
-  inset: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 0 calc(var(--u) * 10) calc(14svh + env(safe-area-inset-bottom));
-  /* Clip the text to the arch opening (traced from the video's last frame and
-     sized/positioned exactly like the video's object-fit: cover), so it fades
-     out at the carved edges instead of running over them. */
-  /* Second layer: a top fade whose height (--fade, set from scroll position in
-     Invitation.jsx) grows from 0 as you scroll, so the first screen is untouched
-     but scrolled text dissolves before reaching the carved top. */
-  --fade: 0px;
-  -webkit-mask:
-    url('/arch-mask.svg') center / cover no-repeat,
-    linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
-  -webkit-mask-composite: source-in;
-  mask:
-    url('/arch-mask.svg') center / cover no-repeat,
-    linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
-  mask-composite: intersect;
-}
-
-.invitation::-webkit-scrollbar {
-  display: none;
-}
+/* ---------- Hero ---------- */
 
 .hero {
-  padding-top: 10svh;
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 10svh calc(var(--u) * 10) calc(3svh + env(safe-area-inset-bottom));
 }
 
 .emblem {
   display: block;
-  width: calc(var(--u) * 34);
+  width: calc(var(--u) * 36);
   height: auto;
 }
 
@@ -141,33 +133,91 @@
   line-height: 1.35;
 }
 
-.person.first {
-  margin-top: 9svh;
-}
-
-.person {
-  margin-top: 2.5svh;
-}
-
-.parents {
-  font-size: calc(var(--u) * 3.3);
-  margin-bottom: 0.4svh;
-}
-
-.weds {
-  margin-top: 0.5svh;
-}
-
 .blessing {
-  margin-top: 6svh;
+  margin-top: 8svh;
   font-weight: 300;
   font-size: calc(var(--u) * 4.1);
   line-height: 1.3;
   letter-spacing: 0.02em;
 }
 
-.hero .datetime {
-  margin-top: 6svh;
+.person.first {
+  margin-top: 8svh;
+}
+
+.person {
+  margin-top: 3svh;
+}
+
+.parents {
+  font-size: calc(var(--u) * 3.3);
+  line-height: 1.3;
+  margin-bottom: 0.6svh;
+}
+
+.hero .weds {
+  margin-top: 1svh;
+}
+
+.scroll-cue {
+  margin-top: auto;
+  padding: 4svh 0 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: calc(var(--u) * 5.6);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.scroll-cue svg {
+  display: block;
+  width: calc(var(--u) * 5);
+  margin: 0 auto 1svh;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  animation: nudge 2.2s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+/* ---------- Events ---------- */
+
+.events {
+  padding: 0 0 calc(18svh + env(safe-area-inset-bottom));
+}
+
+.event {
+  padding-top: calc(var(--u) * 26);
+}
+
+.event-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 3.5);
+  margin-bottom: calc(var(--u) * 3);
+  font-family: var(--display);
+  font-size: calc(var(--u) * 7.4);
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+}
+
+.star {
+  font-size: 0.45em;
+  color: var(--brown);
+}
+
+.amp {
+  margin: 0 0.25em;
+  font-family: var(--serif);
+  font-style: italic;
 }
 
 .datetime {
@@ -179,9 +229,8 @@
 }
 
 .day {
-  font-family: var(--sans);
   font-weight: 400;
-  font-size: calc(var(--u) * 11);
+  font-size: calc(var(--u) * 10.5);
   line-height: 1;
   color: var(--brown);
 }
@@ -189,7 +238,7 @@
 .month-year,
 .time {
   font-size: calc(var(--u) * 3.7);
-  line-height: 1.25;
+  line-height: 1.15;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-align: left;
@@ -206,94 +255,164 @@
   background: var(--gold);
 }
 
+/* Swipeable row of invitation cards; the next card peeks in on the right. */
+.cards {
+  display: flex;
+  gap: calc(var(--u) * 3);
+  margin-top: calc(var(--u) * 7);
+  padding: 0 calc(var(--u) * 15);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 calc(var(--u) * 15);
+  scrollbar-width: none;
+}
+
+.cards::-webkit-scrollbar {
+  display: none;
+}
+
+.cards.single {
+  justify-content: center;
+}
+
+.card {
+  position: relative;
+  flex: none;
+  width: calc(var(--u) * 66);
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: calc(var(--u) * 2.4);
+  background: #e9dcc6;
+  scroll-snap-align: start;
+}
+
+.card.empty {
+  background: #000;
+}
+
+.card video,
+.card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-btn {
+  position: absolute;
+  bottom: calc(var(--u) * 2.6);
+  display: grid;
+  place-items: center;
+  width: calc(var(--u) * 7.5);
+  height: calc(var(--u) * 7.5);
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--u) * 1.6);
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
+  cursor: pointer;
+}
+
+.card-btn svg {
+  width: 62%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.card-btn.download {
+  right: calc(var(--u) * 2.6);
+}
+
+.card-btn.sound {
+  left: calc(var(--u) * 2.6);
+}
+
+.venue-label {
+  margin-top: calc(var(--u) * 6);
+  font-size: calc(var(--u) * 3.4);
+  color: #3d3022;
+}
+
 .venues {
   display: flex;
   justify-content: center;
   gap: calc(var(--u) * 6);
-  margin-top: calc(var(--u) * 4);
+  margin-top: calc(var(--u) * 2.5);
+  padding: 0 calc(var(--u) * 8);
 }
 
 .venue {
-  font-family: var(--serif);
-  font-weight: 500;
-  font-size: calc(var(--u) * 5.6);
-  line-height: 1.15;
+  font-family: var(--display);
+  font-size: calc(var(--u) * 5.4);
+  line-height: 1.25;
   color: var(--ink);
   text-decoration: none;
   border-bottom: 1.5px dotted var(--ink);
 }
 
-/* ---------- Events ---------- */
-
-.event {
-  margin-top: calc(var(--u) * 20);
-}
-
-.event:first-of-type {
-  margin-top: calc(var(--u) * 26);
-}
-
-.event-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: calc(var(--u) * 3);
-  margin-bottom: calc(var(--u) * 5);
-  font-family: var(--serif);
-  font-weight: 500;
-  font-size: calc(var(--u) * 7.2);
-  line-height: 1;
-  letter-spacing: 0.02em;
-}
-
-.star {
-  font-size: 0.45em;
-  color: var(--brown);
-}
-
-.amp {
-  margin: 0 0.25em;
-  font-style: italic;
-}
+/* ---------- Gratitude ---------- */
 
 .gratitude {
-  margin-top: calc(var(--u) * 28);
-}
-
-.gratitude h2 {
-  font-family: var(--serif);
-  font-weight: 500;
-  font-size: calc(var(--u) * 7.2);
-  margin-bottom: calc(var(--u) * 3);
-}
-
-.gratitude p {
-  font-weight: 300;
-  font-size: calc(var(--u) * 4.3);
-  line-height: 1.3;
+  margin-top: calc(var(--u) * 34);
+  padding: 0 calc(var(--u) * 12);
 }
 
 .monogram {
   position: relative;
-  width: calc(var(--u) * 14);
-  height: calc(var(--u) * 14);
-  margin: calc(var(--u) * 5) auto 0;
+  width: calc(var(--u) * 28);
+  height: calc(var(--u) * 33);
+  margin: 0 auto;
   font-family: var(--serif);
   font-style: italic;
-  font-size: calc(var(--u) * 9);
+  font-size: calc(var(--u) * 22);
   line-height: 1;
   color: var(--brown);
 }
 
 .monogram span {
   position: absolute;
+  top: 0;
   left: 50%;
-  transform: translateX(-70%);
+  transform: translateX(-72%);
 }
 
 .monogram span + span {
-  top: 18%;
-  transform: translateX(-30%);
+  top: 22%;
+  transform: translateX(-28%);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 1.5);
+  margin: calc(var(--u) * 3) 0 calc(var(--u) * 4);
+  color: var(--brown);
+  font-size: calc(var(--u) * 2.6);
+}
+
+.divider i {
+  width: calc(var(--u) * 22);
+  height: 1px;
+  background: var(--gold);
+}
+
+.gratitude h2 {
+  font-family: var(--display);
+  font-size: calc(var(--u) * 7);
+  margin-bottom: calc(var(--u) * 3);
+}
+
+.gratitude p {
+  font-weight: 300;
+  font-size: calc(var(--u) * 4.1);
+  line-height: 1.35;
+  letter-spacing: 0.02em;
 }
 
 /* ---------- Motion ---------- */
@@ -329,7 +448,8 @@
 @media (prefers-reduced-motion: reduce) {
   .enter,
   .on-scroll,
-  .names-overlay {
+  .names-overlay,
+  .scroll-cue svg {
     animation: none;
     transition: none;
     opacity: 1;
