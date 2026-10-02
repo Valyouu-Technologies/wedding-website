@@ -45,7 +45,7 @@ export const events = [
     time: '10:00 AM',
     cards: [{ video: '/media/haldi.mp4', poster: '/media/haldi-poster.jpg' }],
     venues: [
-      { name: "Bride's Home", map: null },
+      { name: "Bride's Home", map: 'https://www.google.com/maps?q=17.387968,78.490364' },
       { name: "Groom's Home", map: 'https://maps.app.goo.gl/TefFaHhzWL4FynTCA' },
     ],
   },
