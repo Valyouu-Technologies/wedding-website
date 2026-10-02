@@ -159,9 +159,14 @@
   margin-top: 1svh;
 }
 
-.scroll-cue {
+.scroll-cue-wrap {
   margin-top: auto;
+}
+
+/* Fades out once the guest starts scrolling, back in at the very top. */
+.scroll-cue {
   padding: 4svh 0 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
   border: 0;
   background: none;
   color: var(--ink);
@@ -179,6 +184,12 @@
   stroke: currentColor;
   stroke-width: 1.4;
   animation: nudge 2.2s ease-in-out infinite;
+}
+
+.scroll-cue.is-hidden {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
 }
 
 @keyframes nudge {

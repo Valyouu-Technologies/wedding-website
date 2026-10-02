@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Emblem from './Emblem.jsx'
 import Card from './Card.jsx'
 import { groom, bride, blessing, events, gratitude } from '../data.js'
@@ -49,11 +49,24 @@ function Person({ parents, name, ...rest }) {
   )
 }
 
+// True while the page is scrolled to (nearly) the very top.
+function useAtTop(threshold = 24) {
+  const [atTop, setAtTop] = useState(true)
+  useEffect(() => {
+    const onScroll = () => setAtTop(window.scrollY <= threshold)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [threshold])
+  return atTop
+}
+
 // The first screen, laid over the intro video's final frame.
 export function Hero() {
   // Staggered entrance.
   const step = (i, className = '') => ({ style: { '--i': i }, className: `enter ${className}` })
   const next = () => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })
+  const atTop = useAtTop()
 
   return (
     <section className="hero">
@@ -71,12 +84,19 @@ export function Hero() {
       <p {...step(4, 'weds')}>Weds</p>
       <Person {...step(5, 'person')} {...bride} />
 
-      <button type="button" {...step(6, 'scroll-cue')} onClick={next}>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 9l6 6 6-6" />
-        </svg>
-        Step into our celebration
-      </button>
+      <div {...step(6, 'scroll-cue-wrap')}>
+        <button
+          type="button"
+          className={`scroll-cue ${atTop ? '' : 'is-hidden'}`}
+          onClick={next}
+          tabIndex={atTop ? 0 : -1}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+          Step into our celebration
+        </button>
+      </div>
     </section>
   )
 }
