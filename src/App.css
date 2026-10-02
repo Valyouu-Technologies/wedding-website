@@ -4,8 +4,10 @@
   --ink: #231b13;
   --brown: #5b4a32;
   --gold: #a8742f;
-  /* 1% of the column width; everything scales with the phone's width. */
-  --u: calc(min(100vw, 430px) / 100);
+  /* 1% of the content column; everything scales with it. Normally the phone's
+     width, but on shorter phones (e.g. 16:9) the arch opening is narrower than
+     the screen, so cap it by height to keep the content inside the arch. */
+  --u: min(min(100vw, 430px) / 100, 0.5svh);
 
   --script: 'Pinyon Script', cursive;
   --display: 'Italiana', 'Cormorant Garamond', Georgia, serif;
@@ -126,12 +128,18 @@
 
 /* ---------- Hero ---------- */
 
+.hero,
+.events {
+  width: calc(var(--u) * 100);
+  margin-inline: auto;
+}
+
 .hero {
   min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10svh calc(var(--u) * 10) calc(3svh + env(safe-area-inset-bottom));
+  padding: 10svh calc(var(--u) * 10) calc(6svh + env(safe-area-inset-bottom));
 }
 
 .emblem {
@@ -483,4 +491,39 @@
   .names-overlay:not(.is-visible) {
     opacity: 0;
   }
+}
+
+/* ---------- Large screens ----------
+   Tablets, laptops and desktops (keep in sync with intro.wideQuery in
+   data.js): no intro video; the wide temple-corridor background fills the
+   screen and the invitation scrolls inside its central arch. */
+
+@media (min-width: 768px) and (min-height: 520px) {
+  :root {
+    /* Size the column to the arch opening, which is 24.2% of the background's
+       rendered width (cover: the larger of the screen width or 1530/847 x its
+       height), but never larger than the phone layout's proportions allow for
+       this screen height, so the first screen still fits. */
+    --u: min(max(100vw, 180.6svh) * 0.242 / 75, 0.462svh);
+  }
+
+  .page {
+    max-width: none;
+  }
+
+  video.bg-media {
+    display: none;
+  }
+
+  .invitation {
+    -webkit-mask:
+      url('/arch-mask-wide.svg') center / cover no-repeat,
+      linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
+    -webkit-mask-composite: source-in;
+    mask:
+      url('/arch-mask-wide.svg') center / cover no-repeat,
+      linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
+    mask-composite: intersect;
+  }
+
 }

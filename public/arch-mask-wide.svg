@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1530" height="847" viewBox="0 0 1530 847">
+  <!-- Opening of the arch in bg-wide.jpg (same 1530x847 frame), the large-screen
+       background. Used as a CSS mask so scrolling content only shows inside it. -->
+  <defs>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="847" gradientUnits="userSpaceOnUse">
+      <stop offset="0.95" stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+  <polygon points="765,20 828,46 876,94 914,162 938,240 942,330 942,700 1090,847 440,847 588,700 588,330 592,240 616,162 654,94 702,46" fill="url(#fade)" filter="url(#soft)"/>
+</svg>

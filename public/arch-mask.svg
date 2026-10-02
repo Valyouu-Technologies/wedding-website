@@ -3,7 +3,7 @@
        Used as a CSS mask so scrolling content only shows inside the arch. -->
   <defs>
     <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1280" gradientUnits="userSpaceOnUse">
-      <stop offset="0.9" stop-color="#fff"/>
+      <stop offset="0.95" stop-color="#fff"/>
       <stop offset="1" stop-color="#fff" stop-opacity="0"/>
     </linearGradient>
     <filter id="soft" x="-10%" y="-10%" width="120%" height="120%">

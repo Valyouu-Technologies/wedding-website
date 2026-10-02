@@ -8,6 +8,10 @@ export const intro = {
   video: '/intro.mp4',
   poster: '/intro-start.jpg', // shown while the video loads
   endFrame: '/intro-end.jpg', // shown instead of the video if autoplay is blocked
+  // Large screens (tablets, laptops, desktops) skip the intro and show this
+  // wide background instead. Keep in sync with the media query in App.css.
+  wideFrame: '/bg-wide.jpg',
+  wideQuery: '(min-width: 768px) and (min-height: 520px)',
   // Timings in seconds, matched to the intro video.
   namesFrom: 3.0, // doors open, temple in view
   namesUntil: 7.0, // camera starts pushing into the arch

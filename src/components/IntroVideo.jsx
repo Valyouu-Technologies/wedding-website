@@ -5,10 +5,15 @@ const START_TIMEOUT_MS = 6000
 
 // Plays the intro once and reports which phase we're in based on its playback
 // time. After the last frame it simply stays paused, acting as the background.
+// Underneath sits a still of that final frame (or, on large screens, the wide
+// background), shown on its own when the video is skipped or can't play.
 export default function IntroVideo({
   video,
   poster,
   endFrame,
+  wideFrame,
+  wideQuery,
+  skip: skipVideo,
   namesFrom,
   namesUntil,
   contentAt,
@@ -18,6 +23,11 @@ export default function IntroVideo({
   const [blocked, setBlocked] = useState(false)
 
   useEffect(() => {
+    if (skipVideo) {
+      onPhase('content')
+      return
+    }
+
     const el = videoRef.current
     let raf = 0
     let cancelled = false
@@ -69,22 +79,27 @@ export default function IntroVideo({
       el.removeEventListener('ended', onEnded)
       el.removeEventListener('playing', onPlaying)
     }
-  }, [namesFrom, namesUntil, contentAt, onPhase])
+  }, [skipVideo, namesFrom, namesUntil, contentAt, onPhase])
 
   return (
     <>
-      <video
-        ref={videoRef}
-        className="bg-media"
-        src={video}
-        poster={poster}
-        muted
-        playsInline
-        preload="auto"
-        disablePictureInPicture
-        hidden={blocked}
-      />
-      {blocked && <img className="bg-media" src={endFrame} alt="" />}
+      <picture>
+        <source media={wideQuery} srcSet={wideFrame} />
+        <img className="bg-media still" src={endFrame} alt="" />
+      </picture>
+      {!skipVideo && (
+        <video
+          ref={videoRef}
+          className="bg-media"
+          src={video}
+          poster={poster}
+          muted
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          hidden={blocked}
+        />
+      )}
     </>
   )
 }
