@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Emblem from './Emblem.jsx'
 import Card from './Card.jsx'
+import Monogram from './Monogram.jsx'
 import { groom, bride, blessing, events, gratitude } from '../data.js'
 
 function DateTime({ day, month, year, time }) {
@@ -176,10 +177,7 @@ export default function Invitation() {
         ))}
 
         <footer className="gratitude reveal">
-          <div className="monogram" aria-label="S & S">
-            <span>S</span>
-            <span>S</span>
-          </div>
+          <Monogram />
           <div className="divider" aria-hidden="true">
             <span>✦</span>
             <i />
