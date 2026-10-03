@@ -7,7 +7,7 @@
       <stop offset="1" stop-color="#fff" stop-opacity="0"/>
     </linearGradient>
     <filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
-      <feGaussianBlur stdDeviation="9"/>
+      <feGaussianBlur stdDeviation="4"/>
     </filter>
   </defs>
   <polygon points="765,20 828,46 876,94 914,162 938,240 942,330 942,700 1090,847 440,847 588,700 588,330 592,240 616,162 654,94 702,46" fill="url(#fade)" filter="url(#soft)"/>

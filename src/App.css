@@ -9,7 +9,7 @@
      the screen, so cap it by height to keep the content inside the arch. */
   --u: min(min(100vw, 430px) / 100, 0.5svh);
 
-  --script: 'Pinyon Script', cursive;
+  --script: 'Italianno', cursive;
   --display: 'Italiana', 'Cormorant Garamond', Georgia, serif;
   --sans: 'Jost', system-ui, sans-serif;
   --serif: 'Cormorant Garamond', Georgia, serif;
@@ -46,15 +46,15 @@
 
 .script {
   font-family: var(--script);
-  font-size: calc(var(--u) * 12.5);
-  line-height: 1.15;
+  font-size: calc(var(--u) * 15.5);
+  line-height: 1.05;
   color: var(--brown);
 }
 
 .weds {
   font-family: var(--script);
-  font-size: calc(var(--u) * 6.4);
-  line-height: 1.2;
+  font-size: calc(var(--u) * 8.4);
+  line-height: 1.1;
   color: var(--brown);
 }
 
@@ -87,12 +87,12 @@
 
 .names-overlay .script {
   color: #33261b;
-  font-size: calc(var(--u) * 11);
+  font-size: calc(var(--u) * 13.5);
 }
 
 .names-overlay .weds {
   color: #33261b;
-  font-size: calc(var(--u) * 5);
+  font-size: calc(var(--u) * 7);
 }
 
 /* ---------- Invitation ---------- */
@@ -107,19 +107,9 @@
   scrollbar-width: none;
   /* Clip the content to the arch opening (traced from the video's last frame
      and sized/positioned exactly like the video's object-fit: cover), so it
-     fades out at the carved edges instead of running over them. */
-  /* Second layer: a top fade whose height (--fade, set from scroll position in
-     Invitation.jsx) grows from 0 as you scroll, so the first screen is untouched
-     but scrolled content dissolves before reaching the carved top. */
-  --fade: 0px;
-  -webkit-mask:
-    url('/arch-mask.svg') center / cover no-repeat,
-    linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
-  -webkit-mask-composite: source-in;
-  mask:
-    url('/arch-mask.svg') center / cover no-repeat,
-    linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
-  mask-composite: intersect;
+     stays fully visible inside the arch and stops at the carved edges. */
+  -webkit-mask: url('/arch-mask.svg') center / cover no-repeat;
+  mask: url('/arch-mask.svg') center / cover no-repeat;
 }
 
 .invitation::-webkit-scrollbar {
@@ -221,12 +211,12 @@
 
 /* ---------- Events ---------- */
 
-.events {
-  padding: 0 0 calc(18svh + env(safe-area-inset-bottom));
+.event {
+  padding-top: calc(var(--u) * 56);
 }
 
-.event {
-  padding-top: calc(var(--u) * 26);
+.event:first-child {
+  padding-top: calc(var(--u) * 30);
 }
 
 .event-title {
@@ -387,35 +377,43 @@
   border-bottom: 1.5px dotted var(--ink);
 }
 
-/* ---------- Gratitude ---------- */
+/* ---------- Gratitude ----------
+   Fills the final screen, centred in the arch, so scrolling ends on it. */
 
 .gratitude {
-  margin-top: calc(var(--u) * 34);
-  padding: 0 calc(var(--u) * 12);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6svh calc(var(--u) * 14) calc(10svh + env(safe-area-inset-bottom));
 }
 
+/* Interlaced SS: an upright high-contrast serif S crossed by a swash S. */
 .monogram {
   position: relative;
-  width: calc(var(--u) * 28);
-  height: calc(var(--u) * 33);
-  margin: 0 auto;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: calc(var(--u) * 22);
-  line-height: 1;
+  width: calc(var(--u) * 19);
+  height: calc(var(--u) * 31);
   color: var(--brown);
+  line-height: 1;
 }
 
 .monogram span {
   position: absolute;
+  transform-origin: top left;
+  font-family: 'Playfair Display', var(--serif);
+  font-size: calc(var(--u) * 15.7);
+  left: calc(var(--u) * 3.6);
   top: 0;
-  left: 50%;
-  transform: translateX(-72%);
+  transform: scale(0.85, 1.2);
 }
 
 .monogram span + span {
-  top: 22%;
-  transform: translateX(-28%);
+  font-family: 'Mea Culpa', var(--script);
+  font-size: calc(var(--u) * 22.9);
+  left: calc(var(--u) * 4.3);
+  top: calc(var(--u) * 8.3);
+  transform: scale(0.92, 1.1);
 }
 
 .divider {
@@ -423,7 +421,7 @@
   align-items: center;
   justify-content: center;
   gap: calc(var(--u) * 1.5);
-  margin: calc(var(--u) * 3) 0 calc(var(--u) * 4);
+  margin: calc(var(--u) * 4) 0 calc(var(--u) * 4);
   color: var(--brown);
   font-size: calc(var(--u) * 2.6);
 }
@@ -441,10 +439,55 @@
 }
 
 .gratitude p {
-  font-weight: 300;
+  font-weight: 400;
   font-size: calc(var(--u) * 4.1);
+  line-height: 1.4;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Opening lines (after the intro, before the invitation) ---------- */
+
+.opening {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 5);
+  padding: 4svh calc(var(--u) * 9) 0;
+  font-family: var(--display);
+  font-size: calc(var(--u) * 4.4);
   line-height: 1.35;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.opening p {
+  opacity: 0;
+  animation: unblur 1.4s ease forwards;
+  animation-delay: calc(0.3s + var(--i) * 0.9s);
+}
+
+.opening.is-leaving {
+  opacity: 0;
+  filter: blur(6px);
+  transition: opacity 0.9s ease, filter 0.9s ease;
+}
+
+@keyframes unblur {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
 }
 
 /* ---------- Motion ---------- */
@@ -458,34 +501,150 @@
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    filter: blur(6px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
+    filter: none;
     transform: none;
   }
 }
 
-.on-scroll {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.9s ease, transform 0.9s ease;
+/* Scroll reveals. Each .reveal section gets .is-visible when it scrolls into
+   view; its pieces then animate in, staggered by --d. */
+.reveal {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --step: 130ms;
 }
 
-.on-scroll.is-visible {
+/* Text slides up from behind an invisible line. */
+.rise {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.08em 0.04em 0.14em;
+  vertical-align: bottom;
+}
+
+.rise-inner {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 1.1s var(--ease) calc(var(--d) * var(--step));
+}
+
+.is-visible .rise-inner {
+  transform: none;
+}
+
+/* Fades up out of a soft blur. */
+.fade-up {
+  opacity: 0;
+  filter: blur(6px);
+  transform: translateY(18px);
+  transition:
+    opacity 1s ease calc(var(--d) * var(--step)),
+    filter 1s ease calc(var(--d) * var(--step)),
+    transform 1.1s var(--ease) calc(var(--d) * var(--step));
+}
+
+.is-visible .fade-up {
   opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+/* Title stars turn in; the date's gold rule draws downwards. */
+.reveal .star {
+  display: inline-block;
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.4);
+  transition:
+    opacity 0.8s ease 0.25s,
+    transform 1.2s var(--ease) 0.25s;
+}
+
+.reveal.is-visible .star {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal .rule {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 1s var(--ease) calc(2 * var(--step));
+}
+
+.reveal.is-visible .rule {
+  transform: none;
+}
+
+/* Cards unveil upwards, the picture settling from a slight zoom. */
+.reveal .card {
+  clip-path: inset(100% 0 0 0 round calc(var(--u) * 2.4));
+  transition: clip-path 1.3s var(--ease) calc(2.5 * var(--step));
+}
+
+.reveal.is-visible .card {
+  clip-path: inset(0 0 0 0 round calc(var(--u) * 2.4));
+}
+
+.reveal .card video,
+.reveal .card img {
+  transform: scale(1.18);
+  transition: transform 1.8s var(--ease) calc(2.5 * var(--step));
+}
+
+.reveal.is-visible .card video,
+.reveal.is-visible .card img {
+  transform: none;
+}
+
+/* Gratitude: the monogram comes into focus, then the divider draws out. */
+.reveal .monogram {
+  opacity: 0;
+  filter: blur(10px);
+  transform: scale(0.92);
+  transition:
+    opacity 1.4s ease,
+    filter 1.4s ease,
+    transform 1.6s var(--ease);
+}
+
+.reveal.is-visible .monogram {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.reveal .divider i {
+  transform: scaleX(0);
+  transition: transform 1.1s var(--ease) calc(2 * var(--step));
+}
+
+.reveal.is-visible .divider i {
   transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .enter,
-  .on-scroll,
   .names-overlay,
-  .scroll-cue svg {
+  .scroll-cue svg,
+  .opening p,
+  .rise-inner,
+  .fade-up,
+  .reveal .star,
+  .reveal .rule,
+  .reveal .card,
+  .reveal .card video,
+  .reveal .card img,
+  .reveal .monogram,
+  .reveal .divider i {
     animation: none;
     transition: none;
     opacity: 1;
+    filter: none;
     transform: none;
+    clip-path: none;
   }
 
   .names-overlay:not(.is-visible) {
@@ -516,14 +675,7 @@
   }
 
   .invitation {
-    -webkit-mask:
-      url('/arch-mask-wide.svg') center / cover no-repeat,
-      linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
-    -webkit-mask-composite: source-in;
-    mask:
-      url('/arch-mask-wide.svg') center / cover no-repeat,
-      linear-gradient(to bottom, transparent calc(var(--fade) * 0.4), #000 var(--fade));
-    mask-composite: intersect;
+    -webkit-mask: url('/arch-mask-wide.svg') center / cover no-repeat;
+    mask: url('/arch-mask-wide.svg') center / cover no-repeat;
   }
-
 }

@@ -49,22 +49,26 @@ function Person({ parents, name, ...rest }) {
   )
 }
 
-// Tracks the scroller: whether it's at (nearly) the very top, and grows the
-// top fade (CSS --fade) with scroll distance, up to the height of the arch's
-// carved top, so scrolled text dissolves before reaching the carving.
-function useScroll(ref, threshold = 24) {
+// Whether the scroller is at (nearly) the very top.
+function useAtTop(ref, threshold = 24) {
   const [atTop, setAtTop] = useState(true)
   useEffect(() => {
     const el = ref.current
-    const onScroll = () => {
-      setAtTop(el.scrollTop <= threshold)
-      const max = el.clientHeight * 0.24
-      el.style.setProperty('--fade', `${Math.min(el.scrollTop, max)}px`)
-    }
+    const onScroll = () => setAtTop(el.scrollTop <= threshold)
     el.addEventListener('scroll', onScroll, { passive: true })
     return () => el.removeEventListener('scroll', onScroll)
   }, [ref, threshold])
   return atTop
+}
+
+// Text that slides up into view from behind an invisible line, once its
+// section is revealed. `d` staggers it within the section.
+function Rise({ as: Tag = 'span', d = 0, className = '', children }) {
+  return (
+    <Tag className={`rise ${className}`} style={{ '--d': d }}>
+      <span className="rise-inner">{children}</span>
+    </Tag>
+  )
 }
 
 // The first screen.
@@ -106,10 +110,10 @@ function Hero({ atTop }) {
   )
 }
 
-// Fade sections in as they scroll into view.
+// Reveal each section's pieces (see .reveal in App.css) as it scrolls into view.
 function useReveal(ref) {
   useEffect(() => {
-    const targets = [...ref.current.querySelectorAll('.on-scroll')]
+    const targets = [...ref.current.querySelectorAll('.reveal')]
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => {
@@ -120,7 +124,7 @@ function useReveal(ref) {
             io.unobserve(t)
           })
         }),
-      { threshold: 0.15 },
+      { threshold: 0.12 },
     )
     targets.forEach((t) => io.observe(t))
     return () => io.disconnect()
@@ -132,27 +136,29 @@ function useReveal(ref) {
 export default function Invitation() {
   const ref = useRef(null)
   useReveal(ref)
-  const atTop = useScroll(ref)
+  const atTop = useAtTop(ref)
 
   return (
     <main className="invitation" ref={ref}>
       <Hero atTop={atTop} />
       <div className="events" id="events">
         {events.map((ev) => (
-          <section key={ev.title.join()} className="event on-scroll">
+          <section key={ev.title.join()} className="event reveal">
             <h2 className="event-title">
               <span className="star">✦</span>
-              <span>
+              <Rise d={0}>
                 {ev.title.map((part, i) => (
                   <span key={part}>
                     {i > 0 && <em className="amp">&amp;</em>}
                     {part}
                   </span>
                 ))}
-              </span>
+              </Rise>
               <span className="star">✦</span>
             </h2>
-            <DateTime {...ev} />
+            <div className="fade-up" style={{ '--d': 1 }}>
+              <DateTime {...ev} />
+            </div>
 
             <div className={`cards ${ev.cards.length === 1 ? 'single' : ''}`}>
               {ev.cards.map((card, i) => (
@@ -160,12 +166,16 @@ export default function Invitation() {
               ))}
             </div>
 
-            <p className="caps venue-label">Venue</p>
-            <Venues venues={ev.venues} />
+            <p className="caps venue-label fade-up" style={{ '--d': 4 }}>
+              Venue
+            </p>
+            <div className="fade-up" style={{ '--d': 5 }}>
+              <Venues venues={ev.venues} />
+            </div>
           </section>
         ))}
 
-        <footer className="gratitude on-scroll">
+        <footer className="gratitude reveal">
           <div className="monogram" aria-label="S & S">
             <span>S</span>
             <span>S</span>
@@ -175,8 +185,12 @@ export default function Invitation() {
             <i />
             <span>✦</span>
           </div>
-          <h2>{gratitude.title}</h2>
-          <p>{gratitude.text}</p>
+          <Rise as="h2" d={3}>
+            {gratitude.title}
+          </Rise>
+          <p className="fade-up" style={{ '--d': 4 }}>
+            {gratitude.text}
+          </p>
         </footer>
       </div>
     </main>

@@ -18,6 +18,15 @@ export const intro = {
   contentAt: 8.3, // cream arch has settled
 }
 
+// Shown on its own inside the arch after the intro, before the invitation.
+export const opening = {
+  lines: [
+    ['Two families, bound by blessings,', 'begin a new story.'],
+    ['And every ritual ahead is a chapter', "we'd love for you to be part of."],
+  ],
+  holdMs: 4200, // how long it stays fully visible
+}
+
 export const groom = {
   name: 'Sudeepth Reddy',
   parents: ['Son of Smt. Adulla Saritha', 'Sri. Adulla Srinivas Reddy'],
