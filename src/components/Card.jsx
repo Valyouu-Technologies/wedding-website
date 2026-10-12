@@ -1,49 +1,74 @@
 import { useEffect, useRef, useState } from 'react'
+import { isSoundOn, isUnlocked, register, setSoundOn, subscribe } from '../sound.js'
 
-// Only one card plays with sound at a time.
-const UNMUTE = 'card-unmute'
+// How much of a video must be on screen for it to play, and below which it
+// stops. The gap keeps it from flickering on and off at the edge.
+const PLAY_AT = 0.9
+const STOP_BELOW = 0.5
 
 function InviteVideo({ src, poster, label }) {
   const ref = useRef(null)
   const [muted, setMuted] = useState(true)
 
-  // Play only while mostly on screen, so off-screen cards don't use data.
   useEffect(() => {
     const el = ref.current
+
+    // Sound on unless the guest turned it off. If the browser won't allow
+    // sound yet, play muted until the first tap (see sound.js).
+    const start = () => {
+      el.dataset.active = '1'
+      el.preload = 'auto'
+      el.muted = !(isSoundOn() && isUnlocked())
+      el.play().catch(() => {
+        el.muted = true
+        el.play().catch(() => {})
+      })
+    }
+    const stop = () => {
+      delete el.dataset.active
+      el.pause()
+    }
+
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.isIntersecting) {
-          el.preload = 'auto'
-          el.play().catch(() => {})
-        } else {
-          el.pause()
-        }
+        if (e.intersectionRatio >= PLAY_AT) start()
+        else if (e.intersectionRatio < STOP_BELOW) stop()
+        // Start fetching a little before it's needed.
+        if (e.isIntersecting) el.preload = 'auto'
       },
-      { threshold: 0.6 },
+      { threshold: [0, STOP_BELOW, PLAY_AT, 1] },
     )
     io.observe(el)
-    const onOtherUnmute = (e) => {
-      if (e.detail !== el) setMuted(true)
-    }
-    window.addEventListener(UNMUTE, onOtherUnmute)
+
+    // Sound unlocked or switched on/off elsewhere: apply it to the playing one.
+    const unsubscribe = subscribe(() => {
+      if (!el.dataset.active) return
+      el.muted = !(isSoundOn() && isUnlocked())
+      if (el.paused) start()
+    })
+    const onVolume = () => setMuted(el.muted)
+    el.addEventListener('volumechange', onVolume)
+    const unregister = register(el)
+
     return () => {
       io.disconnect()
-      window.removeEventListener(UNMUTE, onOtherUnmute)
+      unsubscribe()
+      unregister()
+      el.removeEventListener('volumechange', onVolume)
     }
   }, [])
 
-  // React doesn't reliably sync the `muted` attribute, so set the property.
-  useEffect(() => {
-    ref.current.muted = muted
-  }, [muted])
-
+  // Turning sound on or off applies to every video from here on.
   const toggle = () => {
     const el = ref.current
-    if (muted) {
-      window.dispatchEvent(new CustomEvent(UNMUTE, { detail: el }))
+    if (el.muted) {
+      setSoundOn(true)
+      el.muted = false
       el.play().catch(() => {})
+    } else {
+      setSoundOn(false)
+      el.muted = true
     }
-    setMuted(!muted)
   }
 
   return (
@@ -52,7 +77,7 @@ function InviteVideo({ src, poster, label }) {
         ref={ref}
         src={src}
         poster={poster}
-        muted={muted}
+        muted
         loop
         playsInline
         preload="none"
