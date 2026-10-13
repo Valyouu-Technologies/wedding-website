@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
+import { isSoundOn, isUnlocked, subscribe } from '../sound.js'
 
 // If the video hasn't started by then (slow network), skip to the invitation.
 const START_TIMEOUT_MS = 6000
 
-// Plays the intro once and reports which phase we're in based on its playback
-// time. After the last frame it simply stays paused, acting as the background.
-// Underneath sits a still of that final frame (or, on large screens, the wide
-// background), shown on its own when the video is skipped or can't play.
+// Plays the intro (with its music) once and reports which phase we're in
+// based on its playback time. After the last frame it simply stays paused,
+// acting as the background. Underneath sits a still of that final frame (or, on
+// large screens, the wide background), shown on its own when the video is
+// skipped or can't play.
 export default function IntroVideo({
   video,
   poster,
@@ -65,16 +67,29 @@ export default function IntroVideo({
     el.addEventListener('error', skip)
     el.addEventListener('ended', onEnded)
     el.addEventListener('playing', onPlaying)
+    // Try with sound first. Most phones refuse sound before the guest has
+    // tapped, so fall back to playing muted and turn the music on at the
+    // first tap (see sound.js).
+    const begin = () => {
+      if (!cancelled) raf = requestAnimationFrame(tick)
+    }
+    el.muted = !isSoundOn()
     el.play()
-      .then(() => {
-        if (!cancelled) raf = requestAnimationFrame(tick)
+      .then(begin)
+      .catch(() => {
+        if (cancelled) return
+        el.muted = true
+        el.play().then(begin).catch(skip)
       })
-      .catch(skip)
+    const unsubscribe = subscribe(() => {
+      if (!el.ended) el.muted = !(isSoundOn() && isUnlocked())
+    })
 
     return () => {
       cancelled = true
       clearTimeout(timeout)
       cancelAnimationFrame(raf)
+      unsubscribe()
       el.removeEventListener('error', skip)
       el.removeEventListener('ended', onEnded)
       el.removeEventListener('playing', onPlaying)
@@ -93,7 +108,6 @@ export default function IntroVideo({
           className="bg-media"
           src={video}
           poster={poster}
-          muted
           playsInline
           preload="auto"
           disablePictureInPicture
