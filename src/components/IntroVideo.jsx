@@ -5,10 +5,9 @@ import { isSoundOn, isUnlocked, subscribe } from '../sound.js'
 const START_TIMEOUT_MS = 6000
 
 // Plays the intro (with its music) once and reports which phase we're in
-// based on its playback time. After the last frame it simply stays paused,
-// acting as the background. Underneath sits a still of that final frame (or, on
-// large screens, the wide background), shown on its own when the video is
-// skipped or can't play.
+// based on its playback time. Underneath sits a still of its final frame (or,
+// on large screens, the wide background), which takes over as the background
+// once the video ends, or on its own when the video is skipped or can't play.
 export default function IntroVideo({
   video,
   poster,
@@ -22,7 +21,7 @@ export default function IntroVideo({
   onPhase,
 }) {
   const videoRef = useRef(null)
-  const [blocked, setBlocked] = useState(false)
+  const [showStill, setShowStill] = useState(false)
 
   useEffect(() => {
     if (skipVideo) {
@@ -54,11 +53,17 @@ export default function IntroVideo({
     const skip = () => {
       if (cancelled || current === 'content') return
       cancelAnimationFrame(raf)
-      setBlocked(true)
+      setShowStill(true)
       report('content')
     }
 
-    const onEnded = () => report('content')
+    // Once it ends, hand over to the identical still. Some Android phones
+    // (Chrome on Samsung) blank a finished video that has sound, which left
+    // the whole page dark.
+    const onEnded = () => {
+      report('content')
+      setShowStill(true)
+    }
     // `paused` turns false as soon as play() is called, even while the video
     // is still buffering, so time out unless playback has actually begun.
     const timeout = setTimeout(skip, START_TIMEOUT_MS)
@@ -111,7 +116,7 @@ export default function IntroVideo({
           playsInline
           preload="auto"
           disablePictureInPicture
-          hidden={blocked}
+          hidden={showStill}
         />
       )}
     </>
