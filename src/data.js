@@ -78,15 +78,6 @@ export const events = [
       { name: 'Ananda Convention', map: maps('Ananda Convention Himayath Sagar Hyderabad') },
     ],
   },
-  {
-    title: ['Reception'],
-    day: '03',
-    month: 'Nov',
-    year: '2026',
-    time: '07:00 PM',
-    cards: [{ video: '/media/reception.mp4', poster: '/media/reception-poster.jpg' }],
-    venues: [{ name: 'Savaaya Convention', map: maps('Savaaya Convention Gandipet Hyderabad') }],
-  },
 ]
 
 export const gratitude = {
