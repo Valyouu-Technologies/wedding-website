@@ -47,7 +47,7 @@ export const blessing =
 
 export const events = [
   {
-    title: ['Haldi', 'Mehandi'],
+    title: ['Haldi', 'Mehendi'],
     day: '30',
     month: 'Oct',
     year: '2026',
